@@ -28,6 +28,7 @@ async function run (){
         const destinationCollections = database.collection("destinations");
         const holidayPackageCollections = database.collection("holiday_packages");
         const userBookingCollections = database.collection("user_bookings");
+        const feedbacksCollections = database.collection("feedbacks");
 
         // GET API
         app.get('/destinations' , async(req,res)=>{
@@ -42,6 +43,23 @@ async function run (){
             const packages = await cursor.toArray();
 
             res.json(packages);
+
+        })
+        app.get('/feedbacks' , async(req,res)=>{
+            const cursor = feedbacksCollections.find({});
+            const feedbacks = await cursor.toArray();
+
+            res.json(feedbacks);
+
+        })
+        app.get('/packagesbooking' , async(req,res)=>{
+            const id = req.query.id;
+            const query = {_id: new ObjectId(id)}
+            console.log(query)
+            const result = await holidayPackageCollections.findOne(query);
+            
+
+            res.json(result);
 
         })
         app.get('/booking' , async(req,res)=>{
@@ -94,6 +112,16 @@ async function run (){
             res.json(result)
 
 
+        })
+
+        app.delete('/deleteBooking' , async(req,res) => {
+            const name = req.query.name;
+            const query = {destinationName : name};
+            
+            const result = await userBookingCollections.deleteOne(query);
+            
+
+            res.json(result)
         })
 
     }
