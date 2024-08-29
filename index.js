@@ -23,7 +23,7 @@ const client = new MongoClient(uri, {
 
 async function run (){
     try{
-        await client.connect();
+        // await client.connect();
         const database = client.db("tourism_DB");
         const destinationCollections = database.collection("destinations");
         const holidayPackageCollections = database.collection("holiday_packages");
@@ -68,12 +68,31 @@ async function run (){
         })
 
         // POST API
+        app.post('/addplace' , async (req,res) => {
+            const docs = req.body;
+            
+            const result = await destinationCollections.insertOne(docs);
+
+            res.json(result);
+
+        })
         app.post('/userBookings' , async (req,res) => {
             const docs = req.body;
             
             const result = await userBookingCollections.insertOne(docs);
 
             res.json(result);
+
+        })
+
+        // Delete API 
+        app.delete('/deleteUser' , async(req,res) => {
+            const id = req.query.id;
+            const query = {_id : new ObjectId(id)};
+            const result = await userBookingCollections.deleteOne(query);
+
+            res.json(result)
+
 
         })
 
